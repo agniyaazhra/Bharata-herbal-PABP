@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('reviews', function (Blueprint $table) {
+            if (!Schema::hasColumn('reviews', 'order_id')) {
+                $table->foreignId('order_id')->nullable()->constrained()->onDelete('set null')->after('product_id');
+            }
+            if (!Schema::hasColumn('reviews', 'image')) {
+                $table->string('image')->nullable()->after('comment');
+            }
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('reviews', function (Blueprint $table) {
+            if (Schema::hasColumn('reviews', 'image')) {
+                $table->dropColumn('image');
+            }
+            if (Schema::hasColumn('reviews', 'order_id')) {
+                $table->dropForeign(['order_id']);
+                $table->dropColumn('order_id');
+            }
+        });
+    }
+};
